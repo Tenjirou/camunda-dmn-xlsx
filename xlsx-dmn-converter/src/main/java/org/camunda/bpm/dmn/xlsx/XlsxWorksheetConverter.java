@@ -46,6 +46,7 @@ public class XlsxWorksheetConverter {
   {
     CellContentHandler.DEFAULT_HANDLERS.add(new DmnValueRangeConverter());
     CellContentHandler.DEFAULT_HANDLERS.add(new FeelSimpleUnaryTestConverter());
+    CellContentHandler.DEFAULT_HANDLERS.add(new DmnValueExpressionConverter());
     CellContentHandler.DEFAULT_HANDLERS.add(new DmnValueStringConverter());
     CellContentHandler.DEFAULT_HANDLERS.add(new DmnValueNumberConverter());
   }
