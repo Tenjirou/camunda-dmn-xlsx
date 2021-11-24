@@ -17,28 +17,37 @@ import org.camunda.bpm.dmn.xlsx.api.SpreadsheetCell;
 import org.xlsx4j.sml.Cell;
 import org.xlsx4j.sml.STCellType;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author Thorben Lindhauer
  *
  */
-public class FeelSimpleUnaryTestConverter implements CellContentHandler {
+public class DmnValueExpressionConverter implements CellContentHandler {
 
-  public static final Pattern REGEX = Pattern.compile("^((?:<|>)(?!.+(<|>))).+");
+  public static final Pattern RANGE_REGEX = Pattern.compile("^(?:expr\\()(.*)(?:\\))$");
 
+  @Override
   public boolean canConvert(SpreadsheetCell cell, Spreadsheet context) {
     Cell rawCell = cell.getRaw();
 
-    if (!STCellType.S.equals(rawCell.getT())) {
+    if (STCellType.S.equals(rawCell.getT()))
+    {
+      String content = context.resolveCellContent(cell);
+      return RANGE_REGEX.matcher(content).matches();
+    }
+    else
+    {
       return false;
     }
-
-    String rawContent = context.resolveCellContent(cell);
-    return REGEX.matcher(rawContent).matches();
   }
 
+  @Override
   public String convert(SpreadsheetCell cell, Spreadsheet context) {
-    return context.resolveCellContent(cell);
+    Matcher matcher = RANGE_REGEX.matcher(context.resolveCellContent(cell));
+    matcher.find();
+    return matcher.group(1);
   }
+
 }
